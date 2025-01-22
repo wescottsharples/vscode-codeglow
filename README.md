@@ -2,7 +2,9 @@
 
 <div align="center">
 
-![CodeGlow Icon](icon.png)
+![CodeGlow Demo](screen.gif)
+
+<img src="icon.png" width="128" height="128" alt="CodeGlow Icon">
 
 [![Version](https://img.shields.io/visual-studio-marketplace/v/wescottsharples.codeglow)](https://marketplace.visualstudio.com/items?itemName=wescottsharples.codeglow)
 [![Installs](https://img.shields.io/visual-studio-marketplace/i/wescottsharples.codeglow)](https://marketplace.visualstudio.com/items?itemName=wescottsharples.codeglow)
