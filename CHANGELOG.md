@@ -1,5 +1,10 @@
 # Change Log
 
+## [1.0.2] - 2024-01-22
+### Fixed
+- Handle empty documents gracefully
+- Prevent error when all text is deleted from a file
+
 ## [1.0.1] - 2024-01-22
 ### Changed
 - Updated VS Code engine requirement to support version 1.93.0 and above
