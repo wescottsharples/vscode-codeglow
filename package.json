@@ -2,11 +2,11 @@
   "name": "codeglow",
   "displayName": "CodeGlow",
   "description": "Focus on your active code by dimming inactive regions",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "publisher": "wescottsharples",
   "icon": "icon.png",
   "engines": {
-    "vscode": "^1.96.0"
+    "vscode": "^1.93.0"
   },
   "categories": [
     "Other",

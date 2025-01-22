@@ -1,5 +1,10 @@
 # Change Log
 
+## [1.0.1] - 2024-01-22
+### Changed
+- Updated VS Code engine requirement to support version 1.93.0 and above
+- Improved compatibility with Cursor IDE
+
 ## [1.0.0] - 2024-01-22
 ### Added
 - Initial stable release
