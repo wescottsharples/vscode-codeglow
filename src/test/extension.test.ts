@@ -8,8 +8,8 @@ import * as fs from 'fs';
 // as well as import your extension to test it
 // import * as myExtension from '../../extension';
 
-suite('Limelight Extension Test Suite', () => {
-	const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'limelight-test-'));
+suite('CodeGlow Extension Test Suite', () => {
+	const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'codeglow-test-'));
 
 	// Helper to create a test file and open it
 	async function createAndOpenTestFile(content: string, extension: string = '.txt'): Promise<vscode.TextDocument> {
@@ -40,7 +40,7 @@ suite('Limelight Extension Test Suite', () => {
 	// Helper to update configuration
 	async function updateConfig(section: string, value: any) {
 		try {
-			await vscode.workspace.getConfiguration('limelight').update(section, value, vscode.ConfigurationTarget.Global);
+			await vscode.workspace.getConfiguration('codeglow').update(section, value, vscode.ConfigurationTarget.Global);
 		} catch (error) {
 			console.error('Error updating config:', error);
 			throw error;
@@ -52,7 +52,7 @@ suite('Limelight Extension Test Suite', () => {
 
 		try {
 			// Wait for extension to activate
-			const ext = vscode.extensions.getExtension('limelight.limelight');
+			const ext = vscode.extensions.getExtension('wescottsharples.codeglow');
 			if (!ext) {
 				throw new Error('Extension not found');
 			}
@@ -89,16 +89,16 @@ suite('Limelight Extension Test Suite', () => {
 
 	suite('Extension Basics', () => {
 		test('Extension should be present', () => {
-			assert.ok(vscode.extensions.getExtension('limelight.limelight'));
+			assert.ok(vscode.extensions.getExtension('wescottsharples.codeglow'));
 		});
 
 		test('Should register commands', async () => {
 			const commands = await vscode.commands.getCommands();
-			assert.ok(commands.includes('limelight.toggle'));
+			assert.ok(commands.includes('codeglow.toggle'));
 		});
 
 		test('Configuration should load with defaults', () => {
-			const config = vscode.workspace.getConfiguration('limelight');
+			const config = vscode.workspace.getConfiguration('codeglow');
 			assert.strictEqual(config.get('dimOpacity'), 0.3);
 			assert.strictEqual(config.get('paragraphMode'), false);
 			assert.strictEqual(config.get('blockDetection'), 'paragraph');
@@ -110,15 +110,15 @@ suite('Limelight Extension Test Suite', () => {
 	suite('Toggle Functionality', () => {
 		test('Should toggle extension state', async () => {
 			// First enable
-			await vscode.commands.executeCommand('limelight.toggle');
+			await vscode.commands.executeCommand('codeglow.toggle');
 			// Then disable
-			await vscode.commands.executeCommand('limelight.toggle');
+			await vscode.commands.executeCommand('codeglow.toggle');
 			assert.ok(true); // If we got here without errors, test passes
 		});
 
 		test('Should handle rapid toggling', async () => {
 			for (let i = 0; i < 5; i++) {
-				await vscode.commands.executeCommand('limelight.toggle');
+				await vscode.commands.executeCommand('codeglow.toggle');
 			}
 			assert.ok(true); // If we got here without errors, test passes
 		});
@@ -137,7 +137,7 @@ suite('Limelight Extension Test Suite', () => {
 			if (document) {
 				await cleanupTestFile(document);
 			}
-			await vscode.commands.executeCommand('limelight.toggle'); // Ensure disabled
+			await vscode.commands.executeCommand('codeglow.toggle'); // Ensure disabled
 		});
 
 		test('Should handle basic paragraph detection', async () => {
@@ -150,7 +150,7 @@ also with multiple lines
 Third paragraph`;
 
 			document = await createAndOpenTestFile(content);
-			await vscode.commands.executeCommand('limelight.toggle'); // Enable
+			await vscode.commands.executeCommand('codeglow.toggle'); // Enable
 			
 			const editor = vscode.window.activeTextEditor;
 			assert.ok(editor);
@@ -170,7 +170,7 @@ Third paragraph`;
 Paragraph 2`;
 
 			document = await createAndOpenTestFile(content);
-			await vscode.commands.executeCommand('limelight.toggle');
+			await vscode.commands.executeCommand('codeglow.toggle');
 			
 			const editor = vscode.window.activeTextEditor;
 			assert.ok(editor);
@@ -191,7 +191,7 @@ Paragraph 2`;
 			if (document) {
 				await cleanupTestFile(document);
 			}
-			await vscode.commands.executeCommand('limelight.toggle'); // Ensure disabled
+			await vscode.commands.executeCommand('codeglow.toggle'); // Ensure disabled
 		});
 
 		test('Should handle TypeScript symbols', async () => {
@@ -209,7 +209,7 @@ class TestClass {
 }`;
 
 			document = await createAndOpenTestFile(content, '.ts');
-			await vscode.commands.executeCommand('limelight.toggle');
+			await vscode.commands.executeCommand('codeglow.toggle');
 			
 			const editor = vscode.window.activeTextEditor;
 			assert.ok(editor);
@@ -225,7 +225,7 @@ class TestClass {
 		test('Should fallback when no symbols found', async () => {
 			const content = 'Simple text file without symbols';
 			document = await createAndOpenTestFile(content);
-			await vscode.commands.executeCommand('limelight.toggle');
+			await vscode.commands.executeCommand('codeglow.toggle');
 			
 			const editor = vscode.window.activeTextEditor;
 			assert.ok(editor);
@@ -241,12 +241,12 @@ class TestClass {
 			if (document) {
 				await cleanupTestFile(document);
 			}
-			await vscode.commands.executeCommand('limelight.toggle'); // Ensure disabled
+			await vscode.commands.executeCommand('codeglow.toggle'); // Ensure disabled
 		});
 
 		test('Should handle opacity changes', async () => {
 			document = await createAndOpenTestFile('Test content');
-			await vscode.commands.executeCommand('limelight.toggle');
+			await vscode.commands.executeCommand('codeglow.toggle');
 			
 			// Test different opacity values
 			const opacities = [0.1, 0.5, 0.9];
@@ -258,7 +258,7 @@ class TestClass {
 
 		test('Should handle buffer size changes', async () => {
 			document = await createAndOpenTestFile('Test content');
-			await vscode.commands.executeCommand('limelight.toggle');
+			await vscode.commands.executeCommand('codeglow.toggle');
 			
 			// Test different buffer sizes
 			const bufferSizes = [0, 25, 100];
@@ -280,7 +280,7 @@ class TestClass {
 			if (doc2) {
 				await cleanupTestFile(doc2);
 			}
-			await vscode.commands.executeCommand('limelight.toggle'); // Ensure disabled
+			await vscode.commands.executeCommand('codeglow.toggle'); // Ensure disabled
 		});
 
 		test('Should handle editor switching', async () => {
@@ -288,7 +288,7 @@ class TestClass {
 			doc1 = await createAndOpenTestFile('First file content');
 			doc2 = await createAndOpenTestFile('Second file content');
 			
-			await vscode.commands.executeCommand('limelight.toggle');
+			await vscode.commands.executeCommand('codeglow.toggle');
 
 			// Switch between editors
 			await vscode.window.showTextDocument(doc1);
@@ -306,7 +306,7 @@ class TestClass {
 			doc1 = await createAndOpenTestFile('First file content');
 			doc2 = await createAndOpenTestFile('Second file content');
 			
-			await vscode.commands.executeCommand('limelight.toggle');
+			await vscode.commands.executeCommand('codeglow.toggle');
 
 			// Split editor
 			await vscode.commands.executeCommand('workbench.action.splitEditor');

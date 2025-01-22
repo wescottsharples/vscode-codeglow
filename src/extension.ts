@@ -27,7 +27,7 @@ class Logger {
   }
 
   public updateLoggingState() {
-    const config = vscode.workspace.getConfiguration('limelight');
+    const config = vscode.workspace.getConfiguration('codeglow');
     this.enableLogging = config.get<boolean>('enableLogging', false);
   }
 
@@ -146,7 +146,7 @@ function getVisibleRangeWithBuffer(editor: vscode.TextEditor): vscode.Range {
     }
 
     // Get buffer size from configuration
-    const config = vscode.workspace.getConfiguration('limelight');
+    const config = vscode.workspace.getConfiguration('codeglow');
     const bufferLines = config.get<number>('bufferLines', 50);
 
     // Combine all visible ranges and add buffer
@@ -175,7 +175,7 @@ function getVisibleRangeWithBuffer(editor: vscode.TextEditor): vscode.Range {
 function updateDecorationTypes() {
   try {
     // Get configuration
-    const config = vscode.workspace.getConfiguration('limelight');
+    const config = vscode.workspace.getConfiguration('codeglow');
     const dimOpacity = config.get<number>('dimOpacity', 0.3);
 
     // Dispose of existing decoration if it exists
@@ -192,7 +192,7 @@ function updateDecorationTypes() {
     updateDecorations();
   } catch (error) {
     Logger.getInstance().error('Error updating decoration types', error as Error);
-    vscode.window.showErrorMessage('Error updating Limelight decorations. Check output for details.');
+    vscode.window.showErrorMessage('Error updating CodeGlow decorations. Check output for details.');
   }
 }
 
@@ -202,12 +202,12 @@ function updateDecorationTypes() {
 export function activate(context: vscode.ExtensionContext) {
   try {
     // Create output channel
-    outputChannel = vscode.window.createOutputChannel('Limelight');
+    outputChannel = vscode.window.createOutputChannel('CodeGlow');
     
     // Initialize logger and update its state
     const logger = Logger.getInstance();
     logger.updateLoggingState();
-    logger.log('Extension "limelight" is now active!');
+    logger.log('Extension "codeglow" is now active!');
 
     // Initialize decorations
     updateDecorationTypes();
@@ -215,7 +215,7 @@ export function activate(context: vscode.ExtensionContext) {
     // Listen for configuration changes
     context.subscriptions.push(
       vscode.workspace.onDidChangeConfiguration(e => {
-        if (e.affectsConfiguration('limelight')) {
+        if (e.affectsConfiguration('codeglow')) {
           logger.log('Configuration changed, updating settings');
           logger.updateLoggingState();
           updateDecorationTypes();
@@ -224,9 +224,9 @@ export function activate(context: vscode.ExtensionContext) {
     );
 
     // Register the toggle command
-    let toggleCommand = vscode.commands.registerCommand('limelight.toggle', () => {
+    let toggleCommand = vscode.commands.registerCommand('codeglow.toggle', () => {
       isEnabled = !isEnabled;
-      logger.log(`Limelight ${isEnabled ? 'enabled' : 'disabled'}`);
+      logger.log(`CodeGlow ${isEnabled ? 'enabled' : 'disabled'}`);
       
       if (!isEnabled) {
         // Clear all decorations when disabled
@@ -240,7 +240,7 @@ export function activate(context: vscode.ExtensionContext) {
       }
 
       // Show status message to user
-      vscode.window.setStatusBarMessage(`Limelight ${isEnabled ? 'enabled' : 'disabled'}`, 3000);
+      vscode.window.setStatusBarMessage(`CodeGlow ${isEnabled ? 'enabled' : 'disabled'}`, 3000);
     });
 
     context.subscriptions.push(toggleCommand);
@@ -293,7 +293,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   } catch (error) {
     Logger.getInstance().error('Error activating extension', error as Error);
-    vscode.window.showErrorMessage('Error activating Limelight extension. Check output for details.');
+    vscode.window.showErrorMessage('Error activating CodeGlow extension. Check output for details.');
   }
 }
 
@@ -302,7 +302,7 @@ export function activate(context: vscode.ExtensionContext) {
  */
 export function deactivate() {
   try {
-    Logger.getInstance().log('Extension "limelight" is now deactivated!');
+    Logger.getInstance().log('Extension "codeglow" is now deactivated!');
     if (dimDecoration) {
       dimDecoration.dispose();
     }
@@ -334,7 +334,7 @@ async function updateDecorations() {
     logger.log(`Updating decorations for: ${editor.document.fileName}`);
 
     // Get configuration
-    const config = vscode.workspace.getConfiguration('limelight');
+    const config = vscode.workspace.getConfiguration('codeglow');
     const blockDetection = config.get<string>('blockDetection', 'paragraph');
     const paragraphMode = config.get<boolean>('paragraphMode', false);
 
@@ -395,6 +395,6 @@ async function updateDecorations() {
     logger.log(`Decorations applied to ${allRanges.length} visible lines.`);
   } catch (error) {
     logger.error('Error updating decorations', error as Error);
-    vscode.window.showErrorMessage('Error updating Limelight decorations. Check output for details.');
+    vscode.window.showErrorMessage('Error updating CodeGlow decorations. Check output for details.');
   }
 }

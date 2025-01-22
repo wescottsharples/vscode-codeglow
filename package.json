@@ -1,9 +1,9 @@
 {
-  "name": "limelight",
-  "displayName": "Limelight",
+  "name": "codeglow",
+  "displayName": "CodeGlow",
   "description": "Focus on your active code by dimming inactive regions",
   "version": "0.0.1",
-  "publisher": "limelight",
+  "publisher": "wescottsharples",
   "engines": {
     "vscode": "^1.96.0"
   },
@@ -23,43 +23,43 @@
   "contributes": {
     "commands": [
       {
-        "command": "limelight.toggle",
-        "title": "Toggle Limelight Effect",
-        "category": "Limelight"
+        "command": "codeglow.toggle",
+        "title": "Toggle CodeGlow Effect",
+        "category": "CodeGlow"
       }
     ],
     "configuration": {
-      "title": "Limelight",
+      "title": "CodeGlow",
       "properties": {
-        "limelight.dimOpacity": {
+        "codeglow.dimOpacity": {
           "type": "number",
           "default": 0.3,
           "minimum": 0.0,
           "maximum": 1.0,
           "description": "Opacity level for dimmed text (0.0 to 1.0)"
         },
-        "limelight.paragraphMode": {
+        "codeglow.paragraphMode": {
           "type": "boolean",
           "default": true,
           "description": "When enabled, highlights the entire paragraph containing the cursor instead of just the current line"
         },
-        "limelight.blockDetection": {
+        "codeglow.blockDetection": {
           "type": "string",
           "enum": ["documentSymbols", "paragraph"],
           "default": "paragraph",
-          "description": "Choose how Limelight determines the focused block: by language server symbols or by paragraphs"
+          "description": "Choose how CodeGlow determines the focused block: by language server symbols or by paragraphs"
         },
-        "limelight.bufferLines": {
+        "codeglow.bufferLines": {
           "type": "number",
           "default": 50,
           "minimum": 0,
           "maximum": 500,
           "description": "Number of additional lines to buffer above and below the visible range"
         },
-        "limelight.enableLogging": {
+        "codeglow.enableLogging": {
           "type": "boolean",
           "default": false,
-          "description": "Enable debug logging to the Limelight output channel"
+          "description": "Enable debug logging to the CodeGlow output channel"
         }
       }
     }
@@ -72,12 +72,17 @@
     "lint": "eslint src",
     "test": "vscode-test"
   },
+  "galleryBanner": {
+    "color": "#a13328",
+    "theme": "dark"
+  },
+  "homepage": "https://github.com/wescottsharples/vscode-codeglow",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/limelight.git"
+    "url": "https://github.com/wescottsharples/vscode-codeglow.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/limelight/issues"
+    "url": "https://github.com/wescottsharples/vscode-codeglow/issues"
   },
   "devDependencies": {
     "@types/vscode": "^1.96.0",
