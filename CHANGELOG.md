@@ -1,9 +1,27 @@
 # Change Log
 
-All notable changes to the "limelight" extension will be documented in this file.
+## [1.0.0] - 2024-01-22
+### Added
+- Initial stable release
+- High-resolution icon (1024x1024px)
+- Professional dark theme styling
+- Smart focus detection with paragraph and symbol modes
+- Configurable dimming settings
+- Performance optimizations for large files
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
+## [0.0.3] - 2024-01-22
+### Changed
+- Updated extension icon to high-resolution (1024x1024px)
+- Updated gallery banner color to darker theme (#191719)
 
-## [Unreleased]
+## [0.0.2] - 2024-01-22
+### Changed
+- Renamed extension from Limelight to CodeGlow
+- Updated all configuration and command references
 
-- Initial release
+## [0.0.1] - 2024-01-22
+### Added
+- Initial preview release
+- Basic dimming functionality
+- Paragraph and symbol-based detection modes
+- Configurable settings

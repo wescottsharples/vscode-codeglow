@@ -1,98 +1,96 @@
-# Limelight
+# CodeGlow for VS Code
 
-Limelight is a VS Code extension inspired by [limelight.vim](https://github.com/junegunn/limelight.vim) that helps you focus on your active code by dimming inactive regions. Like its Vim counterpart, it's perfect for developers who want to concentrate on specific parts of their code while maintaining context awareness.
+<div align="center">
+
+![CodeGlow Icon](icon.png)
+
+[![Version](https://img.shields.io/visual-studio-marketplace/v/wescottsharples.codeglow)](https://marketplace.visualstudio.com/items?itemName=wescottsharples.codeglow)
+[![Installs](https://img.shields.io/visual-studio-marketplace/i/wescottsharples.codeglow)](https://marketplace.visualstudio.com/items?itemName=wescottsharples.codeglow)
+[![Rating](https://img.shields.io/visual-studio-marketplace/r/wescottsharples.codeglow)](https://marketplace.visualstudio.com/items?itemName=wescottsharples.codeglow)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+**Illuminate your focus, dim the distractions.**
+
+</div>
 
 ## Features
 
-- **Smart Focus**: Automatically highlights your active code block while dimming surrounding code
-- **Paragraph Mode**: By default, treats paragraphs (text between blank lines) as focus blocks, just like limelight.vim
-- **Multiple Detection Modes**: Choose between paragraph-based or symbol-based block detection
+CodeGlow helps you focus on what matters by intelligently dimming inactive regions of your code. Like a spotlight on your active code block, it keeps you in the zone while maintaining context awareness.
+
+### Smart Focus Detection
+
+- **Paragraph Mode**: Automatically detects and highlights text blocks between blank lines
+- **Symbol Mode**: Uses VS Code's language server to focus on semantic blocks (functions, classes, etc.)
+- **Smooth Transitions**: Seamlessly updates as you move through your code
+
+### Customizable Experience
+
+- **Adjustable Dimming**: Fine-tune the opacity of inactive regions (0.0 to 1.0)
+- **Buffer Control**: Set how many lines to process above and below the visible area
+- **Multiple Detection Modes**: Choose between paragraph-based or symbol-based detection
 - **Performance Optimized**: Only processes visible code, making it efficient even with large files
-- **Configurable**: Customize the dimming level and other settings to match your preferences
-- **Language Agnostic**: Works with any programming language
-- **Keyboard Friendly**: Quick toggle command to enable/disable when needed
 
 ## Installation
 
 1. Open VS Code
 2. Press `Ctrl+P` (or `Cmd+P` on macOS)
-3. Type `ext install limelight.limelight`
+3. Type `ext install wescottsharples.codeglow`
 4. Press Enter
 
 ## Usage
 
 1. Open any code file
 2. Move your cursor to a code block
-3. The current block will stay at full opacity while surrounding code is dimmed
+3. The current block stays at full opacity while surrounding code is dimmed
 4. Toggle the effect with:
-   - Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P`): "Limelight: Toggle Effect"
+   - Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P`): "CodeGlow: Toggle Effect"
    - Or set up your own keyboard shortcut
 
 ## Configuration
 
-Limelight can be configured through VS Code's settings:
+CodeGlow can be customized through VS Code's settings:
 
-- `limelight.dimOpacity`: Opacity level for dimmed text (0.0 to 1.0)
-  - Default: 0.3
-  - Higher values = less dimming
-  - Lower values = more dimming
-  - Similar to limelight.vim's coefficient setting
+\`\`\`jsonc
+{
+  // Opacity level for dimmed text (0.0 to 1.0)
+  "codeglow.dimOpacity": 0.3,
 
-- `limelight.blockDetection`: How Limelight determines the focused block
-  - `"paragraph"`: Uses blank lines to determine blocks (default, like limelight.vim)
-  - `"documentSymbols"`: Uses language-specific symbols (functions, classes, etc.)
+  // Use paragraph mode (text between blank lines)
+  "codeglow.paragraphMode": true,
 
-- `limelight.paragraphMode`: Alternative to blockDetection
-  - When enabled, treats paragraphs (text between blank lines) as blocks
-  - Default: true (matching limelight.vim's behavior)
+  // Choose focus detection method
+  "codeglow.blockDetection": "paragraph", // or "documentSymbols"
 
-- `limelight.bufferLines`: Number of additional lines to process above/below visible area
-  - Default: 50
-  - Increase for smoother scrolling
-  - Decrease if you notice performance issues
+  // Number of buffer lines to process
+  "codeglow.bufferLines": 50,
 
-- `limelight.enableLogging`: Enable debug logging
-  - Default: false
-  - Useful for troubleshooting
+  // Enable debug logging
+  "codeglow.enableLogging": false
+}
+\`\`\`
 
-## Performance Considerations
+## Performance
 
-Limelight is designed to be lightweight and efficient:
-- Only processes visible code (plus configurable buffer)
+CodeGlow is designed to be lightweight and efficient:
+- Only processes visible code
 - Minimal CPU usage
 - Low memory footprint
 - Optimized for large files
 
-## Known Issues
-
-- Symbol detection depends on language server capabilities
-- May need to adjust buffer size for optimal scrolling experience
-
-## TODO
-
-- [ ] Try tree-sitter for faster, more accurate parsing
-- [ ] Test and optimize for more languages (Python, Markdown, etc.)
-- [ ] Add smooth transitions between focus states
-- [ ] Support multiple cursor focus regions
-- [ ] Add live opacity adjustment commands
-- [ ] Integrate with VS Code themes
-- [ ] Support VS Code notebooks
-- [ ] Add contribution guidelines
-- [ ] Implement performance optimizations for large files
-
-Want to help? Pick an item and open an issue to discuss your approach! We welcome all contributions.
-
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
-
-## Acknowledgements
-
-This extension is heavily inspired by [limelight.vim](https://github.com/junegunn/limelight.vim) by Junegunn Choi. We aim to bring the same focused writing/coding experience to VS Code users.
+Contributions are welcome! Please feel free to submit a Pull Request. For major changes:
+1. Open an issue first to discuss what you would like to change
+2. Make sure to update tests as appropriate
+3. Follow the existing code style
 
 ## License
 
-[MIT](LICENSE)
+[MIT](LICENSE) © Wescott Sharples
+
+## Acknowledgements
+
+Inspired by [Limelight.vim](https://github.com/junegunn/limelight.vim) by Junegunn Choi. We aim to bring the same focused coding experience to VS Code users.
 
 ## Release Notes
 
