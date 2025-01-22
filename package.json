@@ -1,0 +1,94 @@
+{
+  "name": "limelight",
+  "displayName": "Limelight",
+  "description": "Focus on your active code by dimming inactive regions",
+  "version": "0.0.1",
+  "publisher": "limelight",
+  "engines": {
+    "vscode": "^1.96.0"
+  },
+  "categories": [
+    "Other",
+    "Visualization"
+  ],
+  "keywords": [
+    "focus",
+    "productivity",
+    "dimming",
+    "highlighting",
+    "code-focus"
+  ],
+  "activationEvents": ["*"],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "limelight.toggle",
+        "title": "Toggle Limelight Effect",
+        "category": "Limelight"
+      }
+    ],
+    "configuration": {
+      "title": "Limelight",
+      "properties": {
+        "limelight.dimOpacity": {
+          "type": "number",
+          "default": 0.3,
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "Opacity level for dimmed text (0.0 to 1.0)"
+        },
+        "limelight.paragraphMode": {
+          "type": "boolean",
+          "default": true,
+          "description": "When enabled, highlights the entire paragraph containing the cursor instead of just the current line"
+        },
+        "limelight.blockDetection": {
+          "type": "string",
+          "enum": ["documentSymbols", "paragraph"],
+          "default": "paragraph",
+          "description": "Choose how Limelight determines the focused block: by language server symbols or by paragraphs"
+        },
+        "limelight.bufferLines": {
+          "type": "number",
+          "default": 50,
+          "minimum": 0,
+          "maximum": 500,
+          "description": "Number of additional lines to buffer above and below the visible range"
+        },
+        "limelight.enableLogging": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable debug logging to the Limelight output channel"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/limelight.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/limelight/issues"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.96.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "20.x",
+    "@typescript-eslint/eslint-plugin": "^8.17.0",
+    "@typescript-eslint/parser": "^8.17.0",
+    "eslint": "^9.16.0",
+    "typescript": "^5.7.2",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.4.1"
+  },
+  "license": "MIT"
+}
