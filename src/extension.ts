@@ -331,6 +331,12 @@ async function updateDecorations() {
       return;
     }
 
+    // Check for empty document
+    if (editor.document.lineCount === 0) {
+      logger.log('Document is empty; skipping decoration update.');
+      return;
+    }
+
     logger.log(`Updating decorations for: ${editor.document.fileName}`);
 
     // Get configuration

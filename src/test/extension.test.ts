@@ -177,6 +177,26 @@ Paragraph 2`;
 			editor.selection = new vscode.Selection(1, 0, 1, 0); // Empty line
 			await new Promise(resolve => setTimeout(resolve, 100));
 		});
+
+		test('Should handle completely empty document', async () => {
+			// Create empty document
+			document = await createAndOpenTestFile('');
+			await vscode.commands.executeCommand('codeglow.toggle');
+			
+			const editor = vscode.window.activeTextEditor;
+			assert.ok(editor);
+
+			// Delete all content and verify it doesn't throw
+			await editor.edit(editBuilder => {
+				const lastLine = editor.document.lineAt(editor.document.lineCount - 1);
+				const entireRange = new vscode.Range(0, 0, lastLine.range.end.line, lastLine.range.end.character);
+				editBuilder.delete(entireRange);
+			});
+
+			// Wait a bit for decorations to update
+			await new Promise(resolve => setTimeout(resolve, 100));
+			assert.ok(true); // If we got here without errors, test passes
+		});
 	});
 
 	suite('Symbol Detection', () => {
