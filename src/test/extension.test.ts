@@ -100,7 +100,7 @@ suite('CodeGlow Extension Test Suite', () => {
 		test('Configuration should load with defaults', () => {
 			const config = vscode.workspace.getConfiguration('codeglow');
 			assert.strictEqual(config.get('dimOpacity'), 0.3);
-			assert.strictEqual(config.get('paragraphMode'), false);
+			assert.strictEqual(config.get('paragraphMode'), true);
 			assert.strictEqual(config.get('blockDetection'), 'paragraph');
 			assert.strictEqual(config.get('bufferLines'), 50);
 			assert.strictEqual(config.get('enableLogging'), false);
