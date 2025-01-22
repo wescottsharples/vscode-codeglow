@@ -381,6 +381,12 @@ async function updateDecorations() {
       );
     }
 
+    // If there's a selection that spans multiple lines or characters, expand the excluded range
+    if (!selection.isEmpty) {
+      excludedRange = selection;
+      logger.log(`Selection mode: excluding lines ${excludedRange.start.line + 1}-${excludedRange.end.line + 1}`);
+    }
+
     // 3. Add ranges for all visible lines except the focused ones
     for (let lineIdx = visibleRange.start.line; lineIdx <= visibleRange.end.line; lineIdx++) {
       // Skip lines within the excluded range

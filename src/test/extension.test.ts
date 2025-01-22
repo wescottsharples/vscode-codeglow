@@ -197,6 +197,37 @@ Paragraph 2`;
 			await new Promise(resolve => setTimeout(resolve, 100));
 			assert.ok(true); // If we got here without errors, test passes
 		});
+
+		test('Should handle text selection', async () => {
+			const content = `First paragraph
+with multiple lines
+
+Second paragraph
+also with multiple lines
+
+Third paragraph`;
+
+			document = await createAndOpenTestFile(content);
+			await vscode.commands.executeCommand('codeglow.toggle');
+			
+			const editor = vscode.window.activeTextEditor;
+			assert.ok(editor);
+
+			// Test different selection scenarios
+			const selections = [
+				// Single line selection
+				new vscode.Selection(0, 0, 0, 5),
+				// Multi-line selection
+				new vscode.Selection(0, 0, 1, 5),
+				// Entire document selection (cmd+a)
+				new vscode.Selection(0, 0, 6, 14)
+			];
+
+			for (const sel of selections) {
+				editor.selection = sel;
+				await new Promise(resolve => setTimeout(resolve, 100));
+			}
+		});
 	});
 
 	suite('Symbol Detection', () => {

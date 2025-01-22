@@ -1,5 +1,11 @@
 # Change Log
 
+## [1.0.3] - 2024-01-22
+### Added
+- Selected text now remains at full opacity
+- Improved handling of multi-line selections
+- Better support for "Select All" (cmd+a/ctrl+a)
+
 ## [1.0.2] - 2024-01-22
 ### Fixed
 - Handle empty documents gracefully
