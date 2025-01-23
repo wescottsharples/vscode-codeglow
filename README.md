@@ -4,10 +4,6 @@
 
 [![CodeGlow Demo](screen.gif)](https://marketplace.visualstudio.com/items?itemName=wescottsharples.codeglow)
 
-<a href="https://marketplace.visualstudio.com/items?itemName=wescottsharples.codeglow">
-  <img src="icon.png" width="128" height="128" alt="CodeGlow Icon">
-</a>
-
 [![Version](https://img.shields.io/visual-studio-marketplace/v/wescottsharples.codeglow)](https://marketplace.visualstudio.com/items?itemName=wescottsharples.codeglow)
 [![Installs](https://img.shields.io/visual-studio-marketplace/i/wescottsharples.codeglow)](https://marketplace.visualstudio.com/items?itemName=wescottsharples.codeglow)
 [![Rating](https://img.shields.io/visual-studio-marketplace/r/wescottsharples.codeglow)](https://marketplace.visualstudio.com/items?itemName=wescottsharples.codeglow)
