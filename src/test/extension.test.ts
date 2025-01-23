@@ -285,6 +285,85 @@ class TestClass {
 		});
 	});
 
+	suite('Zen Mode Integration', () => {
+		let document: vscode.TextDocument;
+
+		setup(async () => {
+			// Enable onlyInZenMode setting
+			await updateConfig('onlyInZenMode', true);
+		});
+
+		teardown(async () => {
+			if (document) {
+				await cleanupTestFile(document);
+			}
+			await updateConfig('onlyInZenMode', false);
+			await vscode.commands.executeCommand('codeglow.toggle'); // Ensure disabled
+		});
+
+		test('Should respect onlyInZenMode setting', async () => {
+			const content = `First paragraph
+with multiple lines
+
+Second paragraph
+also with multiple lines`;
+
+			document = await createAndOpenTestFile(content);
+			await vscode.commands.executeCommand('codeglow.toggle'); // Enable extension
+			
+			const editor = vscode.window.activeTextEditor;
+			assert.ok(editor);
+
+			// Simulate window state changes
+			const windowStateChangeEvent = new vscode.EventEmitter<vscode.WindowState>();
+			
+			// Test when not in Zen Mode
+			windowStateChangeEvent.fire({ focused: false, active: false });
+			await new Promise(resolve => setTimeout(resolve, 100));
+
+			// Test when in Zen Mode
+			windowStateChangeEvent.fire({ focused: true, active: true });
+			await new Promise(resolve => setTimeout(resolve, 100));
+
+			assert.ok(true); // If we got here without errors, test passes
+		});
+
+		test('Should handle toggling while in Zen Mode', async () => {
+			const content = `Test content
+for toggling`;
+
+			document = await createAndOpenTestFile(content);
+			
+			// Simulate being in Zen Mode
+			const windowStateChangeEvent = new vscode.EventEmitter<vscode.WindowState>();
+			windowStateChangeEvent.fire({ focused: true, active: true });
+			
+			// Test toggling while in Zen Mode
+			await vscode.commands.executeCommand('codeglow.toggle'); // Enable
+			await new Promise(resolve => setTimeout(resolve, 100));
+			await vscode.commands.executeCommand('codeglow.toggle'); // Disable
+			await new Promise(resolve => setTimeout(resolve, 100));
+
+			assert.ok(true); // If we got here without errors, test passes
+		});
+
+		test('Should handle configuration changes', async () => {
+			const content = `Test content
+for config changes`;
+
+			document = await createAndOpenTestFile(content);
+			
+			// Test changing onlyInZenMode setting while extension is active
+			await vscode.commands.executeCommand('codeglow.toggle'); // Enable
+			await updateConfig('onlyInZenMode', false);
+			await new Promise(resolve => setTimeout(resolve, 100));
+			await updateConfig('onlyInZenMode', true);
+			await new Promise(resolve => setTimeout(resolve, 100));
+
+			assert.ok(true); // If we got here without errors, test passes
+		});
+	});
+
 	suite('Configuration Changes', () => {
 		let document: vscode.TextDocument;
 

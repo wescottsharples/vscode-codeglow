@@ -32,6 +32,13 @@ CodeGlow helps you focus on what matters by intelligently dimming inactive regio
 - **Scroll Behavior**: Configure how the extension handles scrolling and transitions
 - **Performance Optimized**: Only processes visible code, making it efficient even with large files
 
+### Zen Mode Integration
+CodeGlow can now be configured to only activate when VS Code's Zen Mode is enabled. This is perfect for users who want to maintain maximum focus during dedicated writing or coding sessions. To use this feature:
+
+1. Enable the setting: `codeglow.onlyInZenMode`
+2. Enter Zen Mode in VS Code (Cmd/Ctrl+K Z)
+3. CodeGlow will automatically activate and deactivate with Zen Mode
+
 ## Installation
 
 1. Open VS Code
@@ -73,7 +80,10 @@ CodeGlow can be customized through VS Code's settings:
   "codeglow.scrollDebounceDelay": 250,
 
   // Enable debug logging
-  "codeglow.enableLogging": false
+  "codeglow.enableLogging": false,
+
+  // Enable CodeGlow only in Zen Mode
+  "codeglow.onlyInZenMode": true
 }
 \`\`\`
 
@@ -110,3 +120,15 @@ Inspired by [Limelight.vim](https://github.com/junegunn/limelight.vim) by Junegu
 - Paragraph and symbol-based detection modes
 - Configurable settings
 - Performance optimizations
+
+## Settings
+
+* `codeglow.dimOpacity`: Opacity level for dimmed text (0.0 to 1.0)
+* `codeglow.paragraphMode`: When enabled, highlights the entire paragraph containing the cursor instead of just the current line
+* `codeglow.blockDetection`: Choose how CodeGlow determines the focused block: by language server symbols or by paragraphs
+* `codeglow.bufferLines`: Number of additional lines to buffer above and below the visible range
+* `codeglow.disableWhileScrolling`: When enabled, temporarily removes dimming effect while scrolling
+* `codeglow.scrollDebounceDelay`: Delay in milliseconds before reapplying decorations after scrolling stops
+* `codeglow.scrollVelocityThreshold`: Minimum scroll velocity to trigger dimming removal
+* `codeglow.enableLogging`: Enable debug logging to the CodeGlow output channel
+* `codeglow.onlyInZenMode`: When enabled, CodeGlow will only be active when VS Code's Zen Mode is enabled

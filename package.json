@@ -2,7 +2,7 @@
   "name": "codeglow",
   "displayName": "CodeGlow",
   "description": "Focus on your active code by dimming inactive regions",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "publisher": "wescottsharples",
   "icon": "icon.png",
   "engines": {
@@ -85,6 +85,11 @@
           "type": "boolean",
           "default": false,
           "description": "Enable debug logging to the CodeGlow output channel"
+        },
+        "codeglow.onlyInZenMode": {
+          "type": "boolean",
+          "default": false,
+          "description": "When enabled, CodeGlow will only be active when VS Code's Zen Mode is enabled"
         }
       }
     }

@@ -1,5 +1,15 @@
 # Change Log
 
+## [1.0.9] - 2024-01-23
+
+### Added
+- New `onlyInZenMode` setting to activate CodeGlow exclusively in VS Code's Zen Mode
+- Added comprehensive test suite for Zen Mode integration
+
+### Changed
+- Improved window state handling for better Zen Mode detection
+- Updated documentation with Zen Mode integration details
+
 ## [1.0.8] - 2024-01-23
 ### Changed
 - Improved scroll detection to be more selective

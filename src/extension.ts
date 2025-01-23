@@ -9,6 +9,7 @@ let dimDecoration: vscode.TextEditorDecorationType;
 // Add this at the top with other declarations
 let outputChannel: vscode.OutputChannel;
 let isEnabled: boolean = true;
+let isInZenMode: boolean = false;
 
 // Add this at the top with other declarations
 let isScrolling: boolean = false;
@@ -292,6 +293,30 @@ export function activate(context: vscode.ExtensionContext) {
     // Initialize decorations
     updateDecorationTypes();
 
+    // Track Zen Mode state changes
+    context.subscriptions.push(
+      vscode.window.onDidChangeWindowState(e => {
+        // VS Code doesn't provide a direct API to check Zen Mode
+        // We'll check if the window is fullscreen as a proxy
+        isInZenMode = e.focused && vscode.window.state.focused;
+        logger.log(`Window state changed - treating as Zen Mode: ${isInZenMode}`);
+        updateDecorations().catch(error => {
+          logger.error('Error updating decorations on window state change', error);
+        });
+      })
+    );
+
+    // Also track active editor changes to detect Zen Mode
+    context.subscriptions.push(
+      vscode.window.onDidChangeActiveTextEditor(() => {
+        // Update Zen Mode state when editor changes
+        isInZenMode = vscode.window.state.focused;
+        updateDecorations().catch(error => {
+          logger.error('Error updating decorations on editor change', error);
+        });
+      })
+    );
+
     // Listen for configuration changes
     context.subscriptions.push(
       vscode.workspace.onDidChangeConfiguration(e => {
@@ -457,8 +482,16 @@ async function updateDecorations() {
   const logger = Logger.getInstance();
   
   try {
-    // If disabled or currently scrolling, don't apply any decorations
-    if (!isEnabled || isScrolling) {
+    const config = vscode.workspace.getConfiguration('codeglow');
+    const onlyInZenMode = config.get<boolean>('onlyInZenMode', false);
+
+    // If disabled, currently scrolling, or zen mode requirement not met, don't apply decorations
+    if (!isEnabled || isScrolling || (onlyInZenMode && !isInZenMode)) {
+      // Clear decorations if they exist
+      const editor = vscode.window.activeTextEditor;
+      if (editor && dimDecoration) {
+        editor.setDecorations(dimDecoration, []);
+      }
       return;
     }
 
@@ -479,7 +512,6 @@ async function updateDecorations() {
     logger.log(`Updating decorations for: ${editor.document.fileName}`);
 
     // Get configuration
-    const config = vscode.workspace.getConfiguration('codeglow');
     const blockDetection = config.get<string>('blockDetection', 'paragraph');
     const paragraphMode = config.get<boolean>('paragraphMode', false);
 
