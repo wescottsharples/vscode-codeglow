@@ -41,3 +41,14 @@
 - Basic dimming functionality
 - Paragraph and symbol-based detection modes
 - Configurable settings
+
+## [1.0.6] - 2024-03-XX
+
+### Added
+- Performance monitoring capabilities
+- New command: "CodeGlow: Dump Performance Metrics" for performance analysis
+- Internal performance tracking for optimization
+
+### Changed
+- Improved activation events handling
+- Added performance instrumentation to core functions

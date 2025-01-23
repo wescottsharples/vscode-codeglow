@@ -2,7 +2,7 @@
   "name": "codeglow",
   "displayName": "CodeGlow",
   "description": "Focus on your active code by dimming inactive regions",
-  "version": "1.0.4",
+  "version": "1.0.6",
   "publisher": "wescottsharples",
   "icon": "icon.png",
   "engines": {
@@ -26,6 +26,11 @@
       {
         "command": "codeglow.toggle",
         "title": "Toggle CodeGlow Effect",
+        "category": "CodeGlow"
+      },
+      {
+        "command": "codeglow.dumpMetrics",
+        "title": "Dump Performance Metrics",
         "category": "CodeGlow"
       }
     ],
@@ -56,6 +61,18 @@
           "minimum": 0,
           "maximum": 500,
           "description": "Number of additional lines to buffer above and below the visible range"
+        },
+        "codeglow.disableWhileScrolling": {
+          "type": "boolean",
+          "default": true,
+          "description": "When enabled, temporarily removes dimming effect while scrolling"
+        },
+        "codeglow.scrollDebounceDelay": {
+          "type": "number",
+          "default": 150,
+          "minimum": 0,
+          "maximum": 1000,
+          "description": "Delay in milliseconds before reapplying decorations after scrolling stops"
         },
         "codeglow.enableLogging": {
           "type": "boolean",

@@ -10,6 +10,10 @@ let dimDecoration: vscode.TextEditorDecorationType;
 let outputChannel: vscode.OutputChannel;
 let isEnabled: boolean = true;
 
+// Add this at the top with other declarations
+let isScrolling: boolean = false;
+let scrollTimeout: NodeJS.Timeout | undefined;
+
 /**
  * Logger utility to handle debug logging based on configuration
  */
@@ -45,11 +49,78 @@ class Logger {
 }
 
 /**
+ * Performance tracking utility
+ */
+class PerformanceTracker {
+  private static instance: PerformanceTracker;
+  private metrics: Map<string, { count: number; totalTime: number; maxTime: number }> = new Map();
+  private logger: Logger;
+
+  private constructor() {
+    this.logger = Logger.getInstance();
+  }
+
+  public static getInstance(): PerformanceTracker {
+    if (!PerformanceTracker.instance) {
+      PerformanceTracker.instance = new PerformanceTracker();
+    }
+    return PerformanceTracker.instance;
+  }
+
+  public async measure<T>(operation: string, fn: () => Promise<T> | T): Promise<T> {
+    const start = process.hrtime.bigint();
+    try {
+      const result = await fn();
+      this.recordMetric(operation, start);
+      return result;
+    } catch (error) {
+      this.recordMetric(operation, start);
+      throw error;
+    }
+  }
+
+  private recordMetric(operation: string, startTime: bigint) {
+    const endTime = process.hrtime.bigint();
+    const duration = Number(endTime - startTime) / 1_000_000; // Convert to milliseconds
+
+    const metric = this.metrics.get(operation) || { count: 0, totalTime: 0, maxTime: 0 };
+    metric.count++;
+    metric.totalTime += duration;
+    metric.maxTime = Math.max(metric.maxTime, duration);
+    this.metrics.set(operation, metric);
+  }
+
+  public logMetrics() {
+    this.logger.log('\n=== Performance Metrics ===');
+    for (const [operation, metric] of this.metrics.entries()) {
+      const avgTime = metric.totalTime / metric.count;
+      this.logger.log(
+        `${operation}:
+         Count: ${metric.count}
+         Avg Time: ${avgTime.toFixed(2)}ms
+         Max Time: ${metric.maxTime.toFixed(2)}ms
+         Total Time: ${metric.totalTime.toFixed(2)}ms`
+      );
+    }
+  }
+
+  public reset() {
+    this.metrics.clear();
+  }
+}
+
+/**
  * Finds the range of the paragraph containing the given line
  * A paragraph is defined as a block of text surrounded by blank lines
  */
 function findParagraphRange(document: vscode.TextDocument, lineNumber: number): vscode.Range {
   try {
+    // Validate input line number
+    if (lineNumber < 0 || lineNumber >= document.lineCount) {
+      Logger.getInstance().error(`Invalid line number: ${lineNumber}, document has ${document.lineCount} lines`);
+      return new vscode.Range(0, 0, 0, 0);
+    }
+
     let startLine = lineNumber;
     let endLine = lineNumber;
 
@@ -71,14 +142,19 @@ function findParagraphRange(document: vscode.TextDocument, lineNumber: number): 
       endLine++;
     }
 
+    // Double check line numbers are still valid (document could have changed)
+    if (endLine >= document.lineCount) {
+      endLine = document.lineCount - 1;
+    }
+
     return new vscode.Range(
       startLine, 0,
       endLine, document.lineAt(endLine).text.length
     );
   } catch (error) {
     Logger.getInstance().error('Error finding paragraph range', error as Error);
-    // Return a safe fallback - just the current line
-    return new vscode.Range(lineNumber, 0, lineNumber, document.lineAt(lineNumber).text.length);
+    // Return a safe fallback - empty range at start of document
+    return new vscode.Range(0, 0, 0, 0);
   }
 }
 
@@ -245,6 +321,15 @@ export function activate(context: vscode.ExtensionContext) {
 
     context.subscriptions.push(toggleCommand);
 
+    // Register metrics dump command
+    let metricsCommand = vscode.commands.registerCommand('codeglow.dumpMetrics', () => {
+      const perfTracker = PerformanceTracker.getInstance();
+      perfTracker.logMetrics();
+      vscode.window.showInformationMessage('Performance metrics dumped to output channel');
+    });
+
+    context.subscriptions.push(metricsCommand);
+
     // Listen for selection changes in any text editor
     context.subscriptions.push(
       vscode.window.onDidChangeTextEditorSelection(
@@ -276,9 +361,39 @@ export function activate(context: vscode.ExtensionContext) {
       vscode.window.onDidChangeTextEditorVisibleRanges(
         e => {
           logger.log('Visible ranges changed');
-          updateDecorations().catch(error => {
-            logger.error('Error updating decorations on visible range change', error);
-          });
+          
+          // Get configuration
+          const config = vscode.workspace.getConfiguration('codeglow');
+          const disableWhileScrolling = config.get<boolean>('disableWhileScrolling', true);
+          
+          // If scroll handling is disabled, just update decorations normally
+          if (!disableWhileScrolling) {
+            updateDecorations().catch(error => {
+              logger.error('Error updating decorations on visible range change', error);
+            });
+            return;
+          }
+
+          // Clear existing timeout if it exists
+          if (scrollTimeout) {
+            clearTimeout(scrollTimeout);
+          }
+
+          // Clear decorations while scrolling
+          if (!isScrolling && e.textEditor) {
+            isScrolling = true;
+            e.textEditor.setDecorations(dimDecoration, []);
+          }
+
+          const debounceDelay = config.get<number>('scrollDebounceDelay', 150);
+
+          // Set up new timeout to reapply decorations
+          scrollTimeout = setTimeout(() => {
+            isScrolling = false;
+            updateDecorations().catch(error => {
+              logger.error('Error updating decorations after scroll', error);
+            });
+          }, debounceDelay);
         }
       )
     );
@@ -318,8 +433,8 @@ async function updateDecorations() {
   const logger = Logger.getInstance();
   
   try {
-    // If disabled, don't apply any decorations
-    if (!isEnabled) {
+    // If disabled or currently scrolling, don't apply any decorations
+    if (!isEnabled || isScrolling) {
       return;
     }
 
@@ -348,10 +463,22 @@ async function updateDecorations() {
     const visibleRange = getVisibleRangeWithBuffer(editor);
     logger.log(`Visible range (with buffer): lines ${visibleRange.start.line + 1}-${visibleRange.end.line + 1}`);
 
+    // Validate visible range is still within document bounds
+    if (visibleRange.end.line >= editor.document.lineCount) {
+      logger.log('Visible range exceeds document bounds, skipping decoration update');
+      return;
+    }
+
     // 2. Create a list of ranges to dim within the visible range
     const doc = editor.document;
     const allRanges: vscode.Range[] = [];
     const selection = editor.selection;
+
+    // Validate selection is within document bounds
+    if (selection.active.line >= doc.lineCount) {
+      logger.log('Selection exceeds document bounds, skipping decoration update');
+      return;
+    }
 
     let excludedRange: vscode.Range;
     
@@ -387,11 +514,22 @@ async function updateDecorations() {
       logger.log(`Selection mode: excluding lines ${excludedRange.start.line + 1}-${excludedRange.end.line + 1}`);
     }
 
+    // Validate excluded range is within document bounds
+    if (excludedRange.end.line >= doc.lineCount) {
+      logger.log('Excluded range exceeds document bounds, skipping decoration update');
+      return;
+    }
+
     // 3. Add ranges for all visible lines except the focused ones
     for (let lineIdx = visibleRange.start.line; lineIdx <= visibleRange.end.line; lineIdx++) {
       // Skip lines within the excluded range
       if (lineIdx >= excludedRange.start.line && lineIdx <= excludedRange.end.line) {
         continue;
+      }
+
+      // Double check line is still valid
+      if (lineIdx >= doc.lineCount) {
+        break;
       }
 
       const lineText = doc.lineAt(lineIdx).text;
