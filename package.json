@@ -2,7 +2,7 @@
   "name": "codeglow",
   "displayName": "CodeGlow",
   "description": "Focus on your active code by dimming inactive regions",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "publisher": "wescottsharples",
   "icon": "icon.png",
   "engines": {
@@ -73,6 +73,13 @@
           "minimum": 0,
           "maximum": 1000,
           "description": "Delay in milliseconds before reapplying decorations after scrolling stops"
+        },
+        "codeglow.scrollVelocityThreshold": {
+          "type": "number",
+          "default": 0.1,
+          "minimum": 0.01,
+          "maximum": 1.0,
+          "description": "Minimum scroll velocity (lines per millisecond) to trigger dimming removal. Higher values mean faster scrolling is needed. Requires multiple consecutive fast scrolls to activate."
         },
         "codeglow.enableLogging": {
           "type": "boolean",

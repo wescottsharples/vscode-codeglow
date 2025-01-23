@@ -13,6 +13,9 @@ let isEnabled: boolean = true;
 // Add this at the top with other declarations
 let isScrolling: boolean = false;
 let scrollTimeout: NodeJS.Timeout | undefined;
+let lastScrollTime: number = 0;
+let lastScrollPosition: number = -1; // Changed to -1 to detect first scroll
+let consecutiveFastScrolls: number = 0;
 
 /**
  * Logger utility to handle debug logging based on configuration
@@ -388,13 +391,19 @@ export function activate(context: vscode.ExtensionContext) {
             clearTimeout(scrollTimeout);
           }
 
-          // Clear decorations while scrolling
-          if (!isScrolling && e.textEditor) {
-            isScrolling = true;
-            e.textEditor.setDecorations(dimDecoration, []);
+          // Check if we should respond to this scroll event
+          if (e.textEditor && e.textEditor.visibleRanges.length > 0) {
+            const currentPosition = e.textEditor.visibleRanges[0].start.line;
+            
+            // Only clear decorations if scrolling fast or cursor is out of view
+            if (!isScrolling && (isScrollingFast(e.textEditor, currentPosition) || !isCursorVisible(e.textEditor))) {
+              isScrolling = true;
+              e.textEditor.setDecorations(dimDecoration, []);
+              logger.log('Cleared decorations due to fast scroll or cursor out of view');
+            }
           }
 
-          const debounceDelay = config.get<number>('scrollDebounceDelay', 150);
+          const debounceDelay = config.get<number>('scrollDebounceDelay', 250);
 
           // Set up new timeout to reapply decorations
           scrollTimeout = setTimeout(() => {
@@ -572,4 +581,55 @@ function isCursorVisible(editor: vscode.TextEditor): boolean {
   return editor.visibleRanges.some(range => 
     cursorLine >= range.start.line && cursorLine <= range.end.line
   );
+}
+
+/**
+ * Helper function to check if the scroll velocity exceeds the threshold
+ */
+function isScrollingFast(editor: vscode.TextEditor, currentPosition: number): boolean {
+  const now = Date.now();
+  
+  // If this is the first scroll event, just update tracking
+  if (lastScrollPosition === -1) {
+    lastScrollTime = now;
+    lastScrollPosition = currentPosition;
+    consecutiveFastScrolls = 0;
+    return false;
+  }
+
+  const timeDelta = now - lastScrollTime;
+  const positionDelta = Math.abs(currentPosition - lastScrollPosition);
+  
+  // Reset consecutive count if too much time has passed
+  if (timeDelta > 100) { // Reset if more than 100ms between scrolls
+    consecutiveFastScrolls = 0;
+  }
+
+  // Ignore very small time deltas to avoid division by zero
+  if (timeDelta < 16) { // ~60fps
+    return false;
+  }
+
+  // Calculate velocity (lines per millisecond)
+  const velocity = positionDelta / timeDelta;
+
+  // Get configuration
+  const config = vscode.workspace.getConfiguration('codeglow');
+  const velocityThreshold = config.get<number>('scrollVelocityThreshold', 0.1);
+
+  // Update tracking variables
+  lastScrollTime = now;
+  lastScrollPosition = currentPosition;
+
+  // Track consecutive fast scrolls
+  if (velocity > velocityThreshold) {
+    consecutiveFastScrolls++;
+  } else {
+    consecutiveFastScrolls = 0;
+  }
+
+  Logger.getInstance().log(`Scroll velocity: ${velocity.toFixed(3)} lines/ms (threshold: ${velocityThreshold}, consecutive: ${consecutiveFastScrolls})`);
+  
+  // Require 2 consecutive fast scrolls to trigger
+  return consecutiveFastScrolls >= 2;
 }

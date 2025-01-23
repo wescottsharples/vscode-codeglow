@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.0.8] - 2024-01-23
+### Changed
+- Improved scroll detection to be more selective
+- Added velocity-based scroll detection with configurable threshold
+- Added consecutive fast scroll detection to prevent accidental triggers
+- Adjusted default scroll sensitivity for better user experience
+
 ## [1.0.7] - 2024-01-23
 ### Added
 - Smart scroll handling: temporarily removes dimming while scrolling
