@@ -261,7 +261,8 @@ function updateDecorationTypes() {
 
     // Create new decoration with updated settings
     dimDecoration = vscode.window.createTextEditorDecorationType({
-      opacity: dimOpacity.toString()
+      opacity: dimOpacity.toString(),
+      textDecoration: `none; transition: opacity 180ms ease-in-out`
     });
 
     // Update all visible editors
@@ -335,6 +336,14 @@ export function activate(context: vscode.ExtensionContext) {
       vscode.window.onDidChangeTextEditorSelection(
         e => {
           logger.log('Selection changed');
+          
+          // Reset scrolling state and reapply decorations when selection changes
+          isScrolling = false;
+          if (scrollTimeout) {
+            clearTimeout(scrollTimeout);
+            scrollTimeout = undefined;
+          }
+
           updateDecorations().catch(error => {
             logger.error('Error updating decorations on selection change', error);
           });
@@ -390,9 +399,15 @@ export function activate(context: vscode.ExtensionContext) {
           // Set up new timeout to reapply decorations
           scrollTimeout = setTimeout(() => {
             isScrolling = false;
-            updateDecorations().catch(error => {
-              logger.error('Error updating decorations after scroll', error);
-            });
+            
+            // Only reapply decorations if the cursor is visible
+            if (e.textEditor && isCursorVisible(e.textEditor)) {
+              updateDecorations().catch(error => {
+                logger.error('Error updating decorations after scroll', error);
+              });
+            } else {
+              logger.log('Cursor not in visible range, keeping decorations cleared');
+            }
           }, debounceDelay);
         }
       )
@@ -547,4 +562,14 @@ async function updateDecorations() {
     logger.error('Error updating decorations', error as Error);
     vscode.window.showErrorMessage('Error updating CodeGlow decorations. Check output for details.');
   }
+}
+
+/**
+ * Helper function to check if the cursor is within the visible range
+ */
+function isCursorVisible(editor: vscode.TextEditor): boolean {
+  const cursorLine = editor.selection.active.line;
+  return editor.visibleRanges.some(range => 
+    cursorLine >= range.start.line && cursorLine <= range.end.line
+  );
 }

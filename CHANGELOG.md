@@ -1,5 +1,14 @@
 # Change Log
 
+## [1.0.7] - 2024-01-23
+### Added
+- Smart scroll handling: temporarily removes dimming while scrolling
+- Smooth opacity transitions for a more polished experience
+### Changed
+- Improved cursor visibility detection during scrolling
+- Added configurable scroll debounce delay
+- Added option to disable scroll handling
+
 ## [1.0.3] - 2024-01-22
 ### Added
 - Selected text now remains at full opacity

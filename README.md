@@ -26,12 +26,14 @@ CodeGlow helps you focus on what matters by intelligently dimming inactive regio
 - **Paragraph Mode**: Automatically detects and highlights text blocks between blank lines
 - **Symbol Mode**: Uses VS Code's language server to focus on semantic blocks (functions, classes, etc.)
 - **Smooth Transitions**: Seamlessly updates as you move through your code
+- **Smart Scroll Handling**: Temporarily removes dimming while scrolling for better readability
 
 ### Customizable Experience
 
 - **Adjustable Dimming**: Fine-tune the opacity of inactive regions (0.0 to 1.0)
 - **Buffer Control**: Set how many lines to process above and below the visible area
 - **Multiple Detection Modes**: Choose between paragraph-based or symbol-based detection
+- **Scroll Behavior**: Configure how the extension handles scrolling and transitions
 - **Performance Optimized**: Only processes visible code, making it efficient even with large files
 
 ## Installation
@@ -68,6 +70,12 @@ CodeGlow can be customized through VS Code's settings:
   // Number of buffer lines to process
   "codeglow.bufferLines": 50,
 
+  // Enable/disable dimming removal while scrolling
+  "codeglow.disableWhileScrolling": true,
+
+  // Delay before reapplying dimming after scrolling (ms)
+  "codeglow.scrollDebounceDelay": 250,
+
   // Enable debug logging
   "codeglow.enableLogging": false
 }
@@ -80,6 +88,7 @@ CodeGlow is designed to be lightweight and efficient:
 - Minimal CPU usage
 - Low memory footprint
 - Optimized for large files
+- Smart scroll handling to maintain performance
 
 ## Contributing
 
