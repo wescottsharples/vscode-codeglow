@@ -2,7 +2,7 @@
   "name": "codeglow",
   "displayName": "CodeGlow",
   "description": "Focus on your active code by dimming inactive regions",
-  "version": "1.0.9",
+  "version": "1.1.0",
   "publisher": "wescottsharples",
   "icon": "icon.png",
   "engines": {
