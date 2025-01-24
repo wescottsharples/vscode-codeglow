@@ -399,6 +399,48 @@ for config changes`;
 		});
 	});
 
+	suite('Language-Specific Settings', () => {
+		let markdownDoc: vscode.TextDocument;
+		let typescriptDoc: vscode.TextDocument;
+
+		teardown(async () => {
+			if (markdownDoc) {
+				await cleanupTestFile(markdownDoc);
+			}
+			if (typescriptDoc) {
+				await cleanupTestFile(typescriptDoc);
+			}
+			await updateConfig('enabledLanguages', ['*']); // Reset to default
+			await vscode.commands.executeCommand('codeglow.toggle'); // Ensure disabled
+		});
+
+		test('Should respect language-specific settings', async () => {
+			// Create test files
+			markdownDoc = await createAndOpenTestFile('# Test Markdown', '.md');
+			typescriptDoc = await createAndOpenTestFile('const x: number = 1;', '.ts');
+
+			// Enable only for markdown
+			await updateConfig('enabledLanguages', ['markdown']);
+			await vscode.commands.executeCommand('codeglow.toggle');
+
+			// Test markdown file
+			await vscode.window.showTextDocument(markdownDoc);
+			await new Promise(resolve => setTimeout(resolve, 100));
+
+			// Test typescript file
+			await vscode.window.showTextDocument(typescriptDoc);
+			await new Promise(resolve => setTimeout(resolve, 100));
+
+			// Enable for both
+			await updateConfig('enabledLanguages', ['markdown', 'typescript']);
+			await new Promise(resolve => setTimeout(resolve, 100));
+
+			// Test with wildcard
+			await updateConfig('enabledLanguages', ['*']);
+			await new Promise(resolve => setTimeout(resolve, 100));
+		});
+	});
+
 	suite('Multiple Editors', () => {
 		let doc1: vscode.TextDocument;
 		let doc2: vscode.TextDocument;
