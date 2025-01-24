@@ -83,18 +83,50 @@ CodeGlow can be customized through VS Code's settings:
   "codeglow.enableLogging": false,
 
   // Enable CodeGlow only in Zen Mode
-  "codeglow.onlyInZenMode": true
+  "codeglow.onlyInZenMode": true,
+
+  // Enable CodeGlow only for specific languages
+  "codeglow.enabledLanguages": ["*"] // Use specific language IDs like ["markdown", "typescript"]
 }
 \`\`\`
 
 ## Performance
 
 CodeGlow is designed to be lightweight and efficient:
+- Lazy loading: Only activates for specified file types
+- Smart language support: Configure exactly which file types should use CodeGlow
 - Only processes visible code
 - Minimal CPU usage
 - Low memory footprint
 - Optimized for large files
 - Smart scroll handling to maintain performance
+
+### Supported File Types
+
+CodeGlow supports many common file types out of the box:
+- Markdown (`.md`)
+- TypeScript/JavaScript (`.ts`, `.js`, `.tsx`, `.jsx`)
+- Python (`.py`)
+- Java (`.java`)
+- C/C++ (`.c`, `.cpp`)
+- C# (`.cs`)
+- Go (`.go`)
+- Rust (`.rs`)
+- PHP (`.php`)
+- Ruby (`.rb`)
+- Web Technologies (`.html`, `.css`, `.scss`, `.less`)
+- Data Formats (`.json`, `.yaml`, `.xml`)
+- Modern Frameworks (`.vue`, `.svelte`)
+- SQL (`.sql`)
+- Plain Text (`.txt`)
+
+To enable CodeGlow for specific file types only:
+1. Open VS Code Settings
+2. Search for "CodeGlow: Enabled Languages"
+3. Add the language IDs you want to enable (e.g., `["markdown", "typescript"]`)
+4. Or use `["*"]` to enable for all supported file types
+
+Note: The extension only loads when you open supported file types or explicitly invoke CodeGlow commands, ensuring minimal impact on VS Code's performance.
 
 ## Contributing
 
@@ -132,3 +164,4 @@ Inspired by [Limelight.vim](https://github.com/junegunn/limelight.vim) by Junegu
 * `codeglow.scrollVelocityThreshold`: Minimum scroll velocity to trigger dimming removal
 * `codeglow.enableLogging`: Enable debug logging to the CodeGlow output channel
 * `codeglow.onlyInZenMode`: When enabled, CodeGlow will only be active when VS Code's Zen Mode is enabled
+* `codeglow.enabledLanguages`: Choose which languages should use CodeGlow

@@ -1,5 +1,21 @@
 # Change Log
 
+## [1.1.0] - 2024-03-XX
+
+### Added
+- File type specific settings via `enabledLanguages` configuration
+- Lazy loading: Extension now only activates for specified file types
+- Support for many common languages and file types out of the box
+- Support for VS Code webview panels and custom editors
+
+### Changed
+- Improved performance by removing `*` activation event
+- Extension now only loads when needed, reducing VS Code startup impact
+- Better documentation of supported file types and language settings
+
+### Fixed
+- Reduced unnecessary extension activation for unsupported file types
+
 ## [1.0.9] - 2024-01-23
 
 ### Added
