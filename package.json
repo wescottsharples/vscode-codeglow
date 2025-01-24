@@ -19,7 +19,38 @@
     "highlighting",
     "code-focus"
   ],
-  "activationEvents": ["*"],
+  "activationEvents": [
+    "onStartupFinished",
+    "onCommand:codeglow.toggle",
+    "onCommand:codeglow.dumpMetrics",
+    "onWebviewPanel:markdown.preview",
+    "onCustomEditor",
+    "onLanguage:markdown",
+    "onLanguage:typescript",
+    "onLanguage:javascript",
+    "onLanguage:python",
+    "onLanguage:java",
+    "onLanguage:c",
+    "onLanguage:cpp",
+    "onLanguage:csharp",
+    "onLanguage:go",
+    "onLanguage:rust",
+    "onLanguage:php",
+    "onLanguage:ruby",
+    "onLanguage:html",
+    "onLanguage:css",
+    "onLanguage:json",
+    "onLanguage:yaml",
+    "onLanguage:xml",
+    "onLanguage:plaintext",
+    "onLanguage:vue",
+    "onLanguage:svelte",
+    "onLanguage:jsx",
+    "onLanguage:tsx",
+    "onLanguage:scss",
+    "onLanguage:less",
+    "onLanguage:sql"
+  ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
@@ -90,6 +121,14 @@
           "type": "boolean",
           "default": false,
           "description": "When enabled, CodeGlow will only be active when VS Code's Zen Mode is enabled"
+        },
+        "codeglow.enabledLanguages": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": ["*"],
+          "description": "List of language IDs where CodeGlow should be enabled. Use ['*'] to enable for all languages."
         }
       }
     }
