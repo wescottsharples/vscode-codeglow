@@ -319,10 +319,26 @@ export function activate(context: vscode.ExtensionContext) {
 
     // Listen for configuration changes
     context.subscriptions.push(
-      vscode.workspace.onDidChangeConfiguration(e => {
+      vscode.workspace.onDidChangeConfiguration(async e => {
         if (e.affectsConfiguration('codeglow')) {
           logger.log('Configuration changed, updating settings');
           logger.updateLoggingState();
+
+          // If enabledLanguages changed, update activation events
+          if (e.affectsConfiguration('codeglow.enabledLanguages')) {
+            const config = vscode.workspace.getConfiguration('codeglow');
+            const enabledLanguages = config.get<string[]>('enabledLanguages', ['*']);
+            
+            // If wildcard is enabled, we don't need to do anything special
+            if (!enabledLanguages.includes('*')) {
+              // For each language, ensure the extension is ready to handle it
+              for (const lang of enabledLanguages) {
+                // This will ensure the extension is activated for this language
+                await vscode.commands.executeCommand('setContext', `codeglow.language.${lang}`, true);
+              }
+            }
+          }
+
           updateDecorationTypes();
         }
       })
@@ -484,22 +500,26 @@ async function updateDecorations() {
   try {
     const config = vscode.workspace.getConfiguration('codeglow');
     const onlyInZenMode = config.get<boolean>('onlyInZenMode', false);
+    const enabledLanguages = config.get<string[]>('enabledLanguages', ['*']);
 
-    // If disabled, currently scrolling, or zen mode requirement not met, don't apply decorations
-    if (!isEnabled || isScrolling || (onlyInZenMode && !isInZenMode)) {
-      // Clear decorations if they exist
-      const editor = vscode.window.activeTextEditor;
-      if (editor && dimDecoration) {
-        editor.setDecorations(dimDecoration, []);
-      }
-      return;
-    }
-
-    // 1. Get the currently active editor
+    // Get the currently active editor
     const editor = vscode.window.activeTextEditor;
 
     if (!editor) {
       logger.log('No active text editor; cannot update decorations.');
+      return;
+    }
+
+    // Check if the current language is enabled
+    const currentLanguage = editor.document.languageId;
+    const isLanguageEnabled = enabledLanguages.includes('*') || enabledLanguages.includes(currentLanguage);
+
+    // If disabled, currently scrolling, zen mode requirement not met, or language not enabled, don't apply decorations
+    if (!isEnabled || isScrolling || (onlyInZenMode && !isInZenMode) || !isLanguageEnabled) {
+      // Clear decorations if they exist
+      if (editor && dimDecoration) {
+        editor.setDecorations(dimDecoration, []);
+      }
       return;
     }
 
@@ -509,7 +529,7 @@ async function updateDecorations() {
       return;
     }
 
-    logger.log(`Updating decorations for: ${editor.document.fileName}`);
+    logger.log(`Updating decorations for: ${editor.document.fileName} (${currentLanguage})`);
 
     // Get configuration
     const blockDetection = config.get<string>('blockDetection', 'paragraph');
