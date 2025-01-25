@@ -1,17 +1,37 @@
 # Change Log
 
-## [1.1.0] - 2024-03-XX
+## [1.2.0] - 2024-03-19
+
+### Added
+- New delimiter-based block detection mode
+  - Define custom block boundaries using regular expressions
+  - Supports different patterns for block start and end
+  - Falls back to paragraph mode if no patterns are set
+  - Perfect for files with special formatting or comment-based sections
+- Added comprehensive test suite for delimiter-based block detection
+
+### Changed
+- Updated block detection configuration to support three modes: 'paragraph' (default), 'documentSymbols', and 'delimiters'
+- Improved error handling for invalid regex patterns
+- Updated documentation with examples for delimiter-based block detection
+
+## [1.1.0] - 2024-03-18
 
 ### Added
 - File type specific settings via `enabledLanguages` configuration
 - Lazy loading: Extension now only activates for specified file types
 - Support for many common languages and file types out of the box
 - Support for VS Code webview panels and custom editors
+- Performance monitoring capabilities
+- New command: "CodeGlow: Dump Performance Metrics" for performance analysis
+- Internal performance tracking for optimization
 
 ### Changed
 - Improved performance by removing `*` activation event
 - Extension now only loads when needed, reducing VS Code startup impact
 - Better documentation of supported file types and language settings
+- Improved activation events handling
+- Added performance instrumentation to core functions
 
 ### Fixed
 - Reduced unnecessary extension activation for unsupported file types
@@ -83,29 +103,3 @@
 - Basic dimming functionality
 - Paragraph and symbol-based detection modes
 - Configurable settings
-
-## [1.0.6] - 2024-03-XX
-
-### Added
-- Performance monitoring capabilities
-- New command: "CodeGlow: Dump Performance Metrics" for performance analysis
-- Internal performance tracking for optimization
-
-### Changed
-- Improved activation events handling
-- Added performance instrumentation to core functions
-
-## [1.2.0] - 2024-03-XX
-
-### Added
-- New delimiter-based block detection mode
-  - Define custom block boundaries using regular expressions
-  - Supports different patterns for block start and end
-  - Falls back to paragraph mode if no patterns are set
-  - Perfect for files with special formatting or comment-based sections
-- Added comprehensive test suite for delimiter-based block detection
-
-### Changed
-- Updated block detection configuration to support three modes: 'paragraph' (default), 'documentSymbols', and 'delimiters'
-- Improved error handling for invalid regex patterns
-- Updated documentation with examples for delimiter-based block detection
