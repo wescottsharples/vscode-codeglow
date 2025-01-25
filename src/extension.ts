@@ -163,6 +163,73 @@ function findParagraphRange(document: vscode.TextDocument, lineNumber: number): 
 }
 
 /**
+ * Finds the range of the block containing the given line based on delimiter patterns
+ */
+function findDelimitedRange(document: vscode.TextDocument, lineNumber: number): vscode.Range {
+  try {
+    // Validate input line number
+    if (lineNumber < 0 || lineNumber >= document.lineCount) {
+      Logger.getInstance().error(`Invalid line number: ${lineNumber}, document has ${document.lineCount} lines`);
+      return new vscode.Range(0, 0, 0, 0);
+    }
+
+    // Get configuration
+    const config = vscode.workspace.getConfiguration('codeglow');
+    let beginPattern = config.get<string>('blockDelimiters.begin', '');
+    let endPattern = config.get<string>('blockDelimiters.end', '');
+
+    // If no patterns are set, fall back to paragraph mode
+    if (!beginPattern) {
+      return findParagraphRange(document, lineNumber);
+    }
+
+    // If no end pattern is set, use the begin pattern
+    if (!endPattern) {
+      endPattern = beginPattern;
+    }
+
+    let startLine = lineNumber;
+    let endLine = lineNumber;
+
+    // Create RegExp objects
+    const beginRegex = new RegExp(beginPattern);
+    const endRegex = new RegExp(endPattern);
+
+    // Scan upward until we find a delimiter or start of file
+    while (startLine > 0) {
+      const line = document.lineAt(startLine - 1);
+      if (beginRegex.test(line.text)) {
+        break;
+      }
+      startLine--;
+    }
+
+    // Scan downward until we find a delimiter or end of file
+    while (endLine < document.lineCount - 1) {
+      const line = document.lineAt(endLine + 1);
+      if (endRegex.test(line.text)) {
+        break;
+      }
+      endLine++;
+    }
+
+    // Double check line numbers are still valid (document could have changed)
+    if (endLine >= document.lineCount) {
+      endLine = document.lineCount - 1;
+    }
+
+    return new vscode.Range(
+      startLine, 0,
+      endLine, document.lineAt(endLine).text.length
+    );
+  } catch (error) {
+    Logger.getInstance().error('Error finding delimited range', error as Error);
+    // Return a safe fallback - empty range at start of document
+    return new vscode.Range(0, 0, 0, 0);
+  }
+}
+
+/**
  * Finds the smallest symbol that contains the given position
  */
 async function findEnclosingSymbol(document: vscode.TextDocument, position: vscode.Position): Promise<vscode.Range | undefined> {
@@ -572,6 +639,10 @@ async function updateDecorations() {
         );
         logger.log('No symbol found, falling back to line-based focus');
       }
+    } else if (blockDetection === 'delimiters') {
+      // Use delimiter-based block detection
+      excludedRange = findDelimitedRange(doc, selection.active.line);
+      logger.log(`Delimiter mode: excluding lines ${excludedRange.start.line + 1}-${excludedRange.end.line + 1}`);
     } else if (paragraphMode) {
       // In paragraph mode, find the paragraph range containing the cursor
       excludedRange = findParagraphRange(doc, selection.active.line);

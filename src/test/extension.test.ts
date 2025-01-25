@@ -492,4 +492,136 @@ for config changes`;
 			await new Promise(resolve => setTimeout(resolve, 100));
 		});
 	});
+
+	suite('Delimiter Block Detection', () => {
+		let document: vscode.TextDocument;
+
+		setup(async () => {
+			// Enable delimiter mode
+			await updateConfig('blockDetection', 'delimiters');
+		});
+
+		teardown(async () => {
+			if (document) {
+				await cleanupTestFile(document);
+			}
+			await vscode.commands.executeCommand('codeglow.toggle'); // Ensure disabled
+			// Reset delimiter patterns
+			await updateConfig('blockDelimiters.begin', '');
+			await updateConfig('blockDelimiters.end', '');
+		});
+
+		test('Should handle basic delimiter pattern', async () => {
+			const content = `; ----------
+First block content
+with multiple lines
+; ----------
+Second block content
+also with multiple lines
+; ----------
+Third block content`;
+
+			// Set up delimiter pattern
+			await updateConfig('blockDelimiters.begin', '^;\\s*-+\\s*$');
+			
+			document = await createAndOpenTestFile(content);
+			await vscode.commands.executeCommand('codeglow.toggle');
+			
+			const editor = vscode.window.activeTextEditor;
+			assert.ok(editor);
+			
+			// Test different cursor positions within blocks
+			const positions = [1, 2, 4, 5, 7];
+			for (const line of positions) {
+				editor.selection = new vscode.Selection(line, 0, line, 0);
+				await new Promise(resolve => setTimeout(resolve, 100));
+			}
+		});
+
+		test('Should handle different begin/end patterns', async () => {
+			const content = `/* BEGIN BLOCK */
+First block content
+with multiple lines
+/* END BLOCK */
+/* BEGIN BLOCK */
+Second block content
+also with multiple lines
+/* END BLOCK */`;
+
+			// Set up different begin/end patterns
+			await updateConfig('blockDelimiters.begin', '/\\*\\s*BEGIN BLOCK\\s*\\*/');
+			await updateConfig('blockDelimiters.end', '/\\*\\s*END BLOCK\\s*\\*/');
+			
+			document = await createAndOpenTestFile(content);
+			await vscode.commands.executeCommand('codeglow.toggle');
+			
+			const editor = vscode.window.activeTextEditor;
+			assert.ok(editor);
+			
+			// Test positions in different blocks
+			const positions = [1, 2, 5, 6];
+			for (const line of positions) {
+				editor.selection = new vscode.Selection(line, 0, line, 0);
+				await new Promise(resolve => setTimeout(resolve, 100));
+			}
+		});
+
+		test('Should fallback to paragraph mode when no patterns set', async () => {
+			const content = `First paragraph
+with multiple lines
+
+Second paragraph
+also with multiple lines
+
+Third paragraph`;
+
+			// Don't set any delimiter patterns (should fallback to paragraph mode)
+			document = await createAndOpenTestFile(content);
+			await vscode.commands.executeCommand('codeglow.toggle');
+			
+			const editor = vscode.window.activeTextEditor;
+			assert.ok(editor);
+			
+			// Test different positions
+			const positions = [0, 1, 3, 4, 6];
+			for (const line of positions) {
+				editor.selection = new vscode.Selection(line, 0, line, 0);
+				await new Promise(resolve => setTimeout(resolve, 100));
+			}
+		});
+
+		test('Should handle empty document with delimiters enabled', async () => {
+			// Set up delimiter pattern
+			await updateConfig('blockDelimiters.begin', '^;\\s*-+\\s*$');
+			
+			// Create empty document
+			document = await createAndOpenTestFile('');
+			await vscode.commands.executeCommand('codeglow.toggle');
+			
+			const editor = vscode.window.activeTextEditor;
+			assert.ok(editor);
+
+			// Verify it doesn't throw
+			editor.selection = new vscode.Selection(0, 0, 0, 0);
+			await new Promise(resolve => setTimeout(resolve, 100));
+		});
+
+		test('Should handle invalid regex patterns gracefully', async () => {
+			const content = `Some content
+across multiple lines`;
+
+			// Set an invalid regex pattern
+			await updateConfig('blockDelimiters.begin', '(invalid[regex');
+			
+			document = await createAndOpenTestFile(content);
+			await vscode.commands.executeCommand('codeglow.toggle');
+			
+			const editor = vscode.window.activeTextEditor;
+			assert.ok(editor);
+
+			// Verify it doesn't throw and still works
+			editor.selection = new vscode.Selection(0, 0, 0, 0);
+			await new Promise(resolve => setTimeout(resolve, 100));
+		});
+	});
 });

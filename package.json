@@ -82,9 +82,19 @@
         },
         "codeglow.blockDetection": {
           "type": "string",
-          "enum": ["documentSymbols", "paragraph"],
+          "enum": ["documentSymbols", "paragraph", "delimiters"],
           "default": "paragraph",
-          "description": "Choose how CodeGlow determines the focused block: by language server symbols or by paragraphs"
+          "description": "Choose how CodeGlow determines the focused block: by language server symbols, by paragraphs, or by custom delimiters"
+        },
+        "codeglow.blockDelimiters.begin": {
+          "type": "string",
+          "default": "",
+          "description": "Regular expression pattern to match the beginning of a block. Leave empty to use empty lines as delimiters."
+        },
+        "codeglow.blockDelimiters.end": {
+          "type": "string",
+          "default": "",
+          "description": "Regular expression pattern to match the end of a block. Leave empty to use the same pattern as blockDelimiters.begin."
         },
         "codeglow.bufferLines": {
           "type": "number",

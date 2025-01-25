@@ -94,3 +94,18 @@
 ### Changed
 - Improved activation events handling
 - Added performance instrumentation to core functions
+
+## [1.2.0] - 2024-03-XX
+
+### Added
+- New delimiter-based block detection mode
+  - Define custom block boundaries using regular expressions
+  - Supports different patterns for block start and end
+  - Falls back to paragraph mode if no patterns are set
+  - Perfect for files with special formatting or comment-based sections
+- Added comprehensive test suite for delimiter-based block detection
+
+### Changed
+- Updated block detection configuration to support three modes: 'paragraph' (default), 'documentSymbols', and 'delimiters'
+- Improved error handling for invalid regex patterns
+- Updated documentation with examples for delimiter-based block detection

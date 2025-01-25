@@ -17,10 +17,12 @@
 
 CodeGlow helps you focus on what matters by intelligently dimming inactive regions of your code. Like a spotlight on your active code block, it keeps you in the zone while maintaining context awareness.
 
-### Smart Focus Detection
+### Features
 
-- **Paragraph Mode**: Automatically detects and highlights text blocks between blank lines
-- **Symbol Mode**: Uses VS Code's language server to focus on semantic blocks (functions, classes, etc.)
+- **Multiple Block Detection Modes**:
+  - **Paragraph Mode** (default): Automatically detects and highlights text blocks between blank lines
+  - **Symbol Mode**: Uses VS Code's language server to focus on semantic blocks (functions, classes, etc.)
+  - **Delimiter Mode**: Uses custom regular expressions to define block boundaries (great for custom file formats)
 - **Smooth Transitions**: Seamlessly updates as you move through your code
 - **Smart Scroll Handling**: Temporarily removes dimming while scrolling for better readability
 
@@ -28,9 +30,38 @@ CodeGlow helps you focus on what matters by intelligently dimming inactive regio
 
 - **Adjustable Dimming**: Fine-tune the opacity of inactive regions (0.0 to 1.0)
 - **Buffer Control**: Set how many lines to process above and below the visible area
-- **Multiple Detection Modes**: Choose between paragraph-based or symbol-based detection
+- **Multiple Detection Modes**: Choose between paragraph-based, symbol-based, or custom delimiter-based detection
+- **Custom Block Delimiters**: Define your own block boundaries using regular expressions
 - **Scroll Behavior**: Configure how the extension handles scrolling and transitions
 - **Performance Optimized**: Only processes visible code, making it efficient even with large files
+
+### Block Detection Modes
+
+#### Paragraph Mode (Default)
+Detects blocks based on empty lines. This is ideal for most programming languages and markdown files.
+
+#### Symbol Mode
+Uses VS Code's language server to detect semantic blocks like functions and classes. Best for structured code.
+
+#### Delimiter Mode
+Define custom block boundaries using regular expressions. Perfect for files with special formatting or comment-based sections.
+
+Example configuration for files with "; --------" style delimiters:
+```json
+{
+  "codeglow.blockDetection": "delimiters",
+  "codeglow.blockDelimiters.begin": "^(;\\s*)+[-]+\\s*$"
+}
+```
+
+You can also set different patterns for block start and end:
+```json
+{
+  "codeglow.blockDetection": "delimiters",
+  "codeglow.blockDelimiters.begin": "/\\*\\s*BEGIN BLOCK\\s*\\*/",
+  "codeglow.blockDelimiters.end": "/\\*\\s*END BLOCK\\s*\\*/"
+}
+```
 
 ### Zen Mode Integration
 CodeGlow can now be configured to only activate when VS Code's Zen Mode is enabled. This is perfect for users who want to maintain maximum focus during dedicated writing or coding sessions. To use this feature:
