@@ -117,7 +117,10 @@ CodeGlow can be customized through VS Code's settings:
   "codeglow.onlyInZenMode": true,
 
   // Enable CodeGlow only for specific languages
-  "codeglow.enabledLanguages": ["*"] // Use specific language IDs like ["markdown", "typescript"]
+  "codeglow.enabledLanguages": ["*"], // Use specific language IDs like ["markdown", "typescript"]
+
+  // Keep markdown headings visible
+  "codeglow.keepMarkdownHeadingsVisible": false // When true, keeps all markdown headings visible regardless of cursor position
 }
 \`\`\`
 
@@ -196,3 +199,4 @@ Inspired by [Limelight.vim](https://github.com/junegunn/limelight.vim) by Junegu
 * `codeglow.enableLogging`: Enable debug logging to the CodeGlow output channel
 * `codeglow.onlyInZenMode`: When enabled, CodeGlow will only be active when VS Code's Zen Mode is enabled
 * `codeglow.enabledLanguages`: Choose which languages should use CodeGlow
+* `codeglow.keepMarkdownHeadingsVisible`: When true, keeps all markdown headings visible regardless of cursor position

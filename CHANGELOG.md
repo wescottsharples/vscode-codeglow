@@ -1,5 +1,14 @@
 # Change Log
 
+## [1.3.0] - 2024-03-20
+
+### Added
+- New markdown heading visibility feature
+  - Option to keep all markdown headings visible regardless of cursor position
+  - Helps maintain document structure awareness while editing
+  - Configurable via `keepMarkdownHeadingsVisible` setting
+  - Works with all heading levels (H1-H6)
+
 ## [1.2.0] - 2024-03-19
 
 ### Added

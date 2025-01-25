@@ -568,6 +568,7 @@ async function updateDecorations() {
     const config = vscode.workspace.getConfiguration('codeglow');
     const onlyInZenMode = config.get<boolean>('onlyInZenMode', false);
     const enabledLanguages = config.get<string[]>('enabledLanguages', ['*']);
+    const keepMarkdownHeadingsVisible = config.get<boolean>('keepMarkdownHeadingsVisible', false);
 
     // Get the currently active editor
     const editor = vscode.window.activeTextEditor;
@@ -667,7 +668,7 @@ async function updateDecorations() {
       return;
     }
 
-    // 3. Add ranges for all visible lines except the focused ones
+    // 3. Add ranges for all visible lines except the focused ones and markdown headings
     for (let lineIdx = visibleRange.start.line; lineIdx <= visibleRange.end.line; lineIdx++) {
       // Skip lines within the excluded range
       if (lineIdx >= excludedRange.start.line && lineIdx <= excludedRange.end.line) {
@@ -680,6 +681,12 @@ async function updateDecorations() {
       }
 
       const lineText = doc.lineAt(lineIdx).text;
+
+      // Skip markdown headings if the feature is enabled and we're in a markdown file
+      if (keepMarkdownHeadingsVisible && currentLanguage === 'markdown' && /^#{1,6}\s+/.test(lineText)) {
+        continue;
+      }
+
       allRanges.push(new vscode.Range(
         lineIdx, 0,
         lineIdx, lineText.length
