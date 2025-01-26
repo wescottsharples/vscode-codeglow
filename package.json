@@ -105,7 +105,7 @@
         },
         "codeglow.disableWhileScrolling": {
           "type": "boolean",
-          "default": true,
+          "default": false,
           "description": "When enabled, temporarily removes dimming effect while scrolling"
         },
         "codeglow.scrollDebounceDelay": {
@@ -144,6 +144,23 @@
           "type": "boolean",
           "default": false,
           "description": "When enabled, markdown headings will always remain visible, regardless of cursor position"
+        },
+        "codeglow.symbolHighlightScope": {
+          "type": "string",
+          "enum": ["current", "parent", "root"],
+          "default": "current",
+          "description": "Choose the scope level for symbol-based highlighting: current (innermost symbol), parent (immediate parent symbol), or root (root symbol and all children)"
+        },
+        "codeglow.symbolHighlightEnabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "When enabled, uses document symbols to determine highlight scope instead of line-based or paragraph-based highlighting"
+        },
+        "codeglow.symbolFallbackMode": {
+          "type": "string",
+          "enum": ["line", "paragraph"],
+          "default": "line",
+          "description": "Fallback mode to use when symbol-based highlighting is enabled but no symbols are found"
         }
       }
     }
